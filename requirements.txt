@@ -1,0 +1,10 @@
+Django==4.2
+psycopg2
+httpx
+supabase
+mnemonic
+gunicorn
+shortuuid
+whitenoise
+django-compressor
+django-versatileimagefield
