@@ -7,4 +7,4 @@ gunicorn
 shortuuid
 whitenoise
 django-compressor
-django-versatileimagefield
+python-dotenv
