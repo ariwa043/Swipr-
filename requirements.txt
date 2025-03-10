@@ -8,3 +8,4 @@ shortuuid
 whitenoise
 django-compressor
 python-dotenv
+django-jazzmin
