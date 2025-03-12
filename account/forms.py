@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, Deposit, Spend
+from .models import User, Deposit
 from django.contrib.auth.forms import AuthenticationForm
 
 
@@ -59,20 +59,6 @@ class DepositForm(forms.ModelForm):
         amount = self.cleaned_data.get('amount')
         if not amount:
             raise forms.ValidationError("Amount is required.")
-        if amount <= 0:
-            raise forms.ValidationError("Amount must be greater than zero.")
-        return amount
-
-
-
-# Form for spending XP
-class SpendForm(forms.ModelForm):
-    class Meta:
-        model = Spend
-        fields = ['amount']
-
-    def clean_amount(self):
-        amount = self.cleaned_data.get('amount')
         if amount <= 0:
             raise forms.ValidationError("Amount must be greater than zero.")
         return amount
