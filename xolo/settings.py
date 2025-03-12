@@ -23,15 +23,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-wu70r19c=ua@4!js2gijsibhr$bq&6k!$5=nym2ojk1wuz1=(g'
+SECRET_KEY = os.getenv('SECRET_KEY')
 AUTH_USER_MODEL = 'account.User'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*', 'https://wallet-nrrw.onrender.com']
+ALLOWED_HOSTS = ['*', 'https://mailing-i4uv.onrender.com']
 
-CSRF_TRUSTED_ORIGINS = ['https://wallet-nrrw.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://mailing-i4uv.onrender.com']
 
 # Application definition
 
@@ -50,7 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
- #   'whitenoise.middleware.WhiteNoiseMiddleware',  # 
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -84,8 +84,12 @@ WSGI_APPLICATION = 'xolo.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': os.getenv('DB_NAME', BASE_DIR / 'db.sqlite3'),
+        'USER': os.getenv('DB_USER', ''),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', ''),
+        'PORT': os.getenv('DB_PORT', ''),
     }
 }
 
@@ -133,7 +137,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR,'static'),  # Ensure this points to your development static files
 ]
 
-#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Compress static files
 STATICFILES_FINDERS = (
