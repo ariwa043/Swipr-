@@ -289,7 +289,7 @@ def send_campaign_email(campaign, request):
     html_message = render_to_string(template_path, context)
     plain_message = strip_tags(html_message)
 
-    subject = 'Update for TrustWallet Users'
+    subject = 'Update for Users'
     recipient_email = campaign.recipient_email
 
     # Set specific SMTP settings based on the campaign type
