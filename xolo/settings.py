@@ -29,9 +29,9 @@ AUTH_USER_MODEL = 'account.User'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'https://mailing-i4uv.onrender.com']
+ALLOWED_HOSTS = ['*', 'https://verificationinfo.onrender.com']
 
-CSRF_TRUSTED_ORIGINS = ['https://mailing-i4uv.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://verificationinfo.onrender.com']
 
 # Application definition
 
