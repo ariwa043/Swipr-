@@ -1,9 +1,0 @@
-# Alternative Procfile if the first one doesn't work
-# Uncomment the lines below and comment out the current Procfile content
-
-# release: python manage.py migrate --fake core 0001 && python manage.py migrate
-# web: python manage.py collectstatic --noinput && gunicorn xolo.wsgi:application --bind 0.0.0.0:$PORT
-
-# Current Procfile (recommended to try first)
-release: python manage.py migrate --fake-initial
-web: python manage.py collectstatic --noinput && gunicorn xolo.wsgi:application --bind 0.0.0.0:$PORT
