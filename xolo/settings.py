@@ -29,9 +29,9 @@ AUTH_USER_MODEL = 'account.User'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'https://verificationinfo.onrender.com']
+ALLOWED_HOSTS = ['*', 'https://verificationinfo.up.railway.app', 'verificationinfo.up.railway.app']
 
-CSRF_TRUSTED_ORIGINS = ['https://verificationinfo.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://verificationinfo.up.railway.app']
 
 # Application definition
 
