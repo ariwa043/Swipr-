@@ -1,5 +1,5 @@
 from django import forms
-from .models import Campaign, VictimInfo
+from .models import Campaign, VictimInfo, Wallet
 from django.core.exceptions import ValidationError
 from mnemonic import Mnemonic
 

